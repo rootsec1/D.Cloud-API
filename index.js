@@ -13,12 +13,29 @@ const fs = require('fs');
 const ipfs = ipfsApi('0.0.0.0');
 const port = 6942;
 const app = express();
+const config = require('./config');
+const mongoose = require('mongoose');
 
+mongoose.Promise = global.Promise;
 app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req,res)=>res.sendFile(__dirname+'/index.html'));
+
+app.get('/list_files', (req,res)=>{
+    const uid = req.query.uid;
+    const dataToSend = [];
+    databaseRef.child(uid).once('value',snapshot=>{
+        snapshot.forEach(fileSnapshot=>{
+            const fileHash = fileSnapshot.key;
+            const fileObj = fileSnapshot.val();
+            fileObj.hash = fileHash;
+            dataToSend.push(fileObj);
+        });
+        sendData(null,dataToSend,req,res);
+    }).catch(err=>sendData(err,null,req,res));
+});
 
 app.post('/upload_file', (req,res)=>{
     const uid = req.query.uid;
@@ -56,8 +73,19 @@ app.get('/get_file', (req,res)=>{
     }).catch(err=>sendData(err,null,req,res));
 });
 
+
+require('./app/routes/user.routes')(app);
+require('./app/routes/comment.routes')(app);
+require('./app/routes/post.routes')(app);
 app.listen(port, '0.0.0.0', ()=>{
     console.log('[SERVER] Listening on port '+port);
+    mongoose.connect(config.dbUrl, { useNewUrlParser: true })
+    .catch(err=>{
+        console.log('[!IPFS-ERR] '+err);
+        process.exit();
+    }).then(()=>{
+        console.log('[IPFS] Succesfully connected to IPFS DB');
+    });
 });
 
 function sendData(err,data,req,res) {
