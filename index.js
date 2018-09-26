@@ -41,7 +41,6 @@ app.post('/upload_file', (req,res)=>{
     const uid = req.query.uid;
     const file = req.files.foo;
     ipfs.files.add(Buffer.from(file.data), (errIpfs,result)=>{
-        console.log("RESULT: "+JSON.stringify(result));
         result = result[0];
         const fileName = file.name;
         const fileSize = result.size;
