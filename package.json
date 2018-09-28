@@ -10,7 +10,8 @@
     "firebase-admin": "^6.0.0",
     "ipfs-api": "^24.0.2",
     "mongoose": "^5.2.17",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "request": "^2.88.0"
   },
   "devDependencies": {},
   "scripts": {

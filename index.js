@@ -15,13 +15,17 @@ const port = 6942;
 const app = express();
 const config = require('./config');
 const mongoose = require('mongoose');
+const request = require('request');
 
 mongoose.Promise = global.Promise;
 app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req,res)=>res.sendFile(__dirname+'/index.html'));
+app.get('/', (req,res)=>{
+    if(req.query.hash) request('http://127.0.0.1:8080/ipfs/'+req.query.hash).pipe(res);
+    else res.sendFile(__dirname+'/index.html')
+});
 
 app.get('/list_files', (req,res)=>{
     const uid = req.query.uid;
@@ -58,7 +62,7 @@ app.post('/upload_file', (req,res)=>{
     });
 });
 
-app.get('/get_file', (req,res)=>{
+app.get('/get', (req,res)=>{
     const uid = req.query.uid;
     const hash = req.query.hash;
     databaseRef.child(uid).child(hash).once('value', snapshot=>{
