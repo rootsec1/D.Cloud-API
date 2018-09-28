@@ -27,6 +27,21 @@ app.get('/', (req,res)=>{
     else res.sendFile(__dirname+'/index.html')
 });
 
+app.get('/all', (req,res)=>{
+    const dataToSend = [];
+    databaseRef.once('value', rootSnapshot=>{
+        rootSnapshot.forEach(userSnapshot=>{
+            userSnapshot.forEach(fileSnapshot=>{
+                const fileHash = fileSnapshot.key;
+                const fileObj = fileSnapshot.val();
+                fileObj.hash = fileHash;
+                dataToSend.push(fileObj);
+            });
+        });
+        sendData(null,dataToSend,req,res);
+    }).catch(err=>sendData(err,null,req,res));
+});
+
 app.get('/list_files', (req,res)=>{
     const uid = req.query.uid;
     const dataToSend = [];
