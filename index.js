@@ -92,11 +92,12 @@ app.get('/get', (req,res)=>{
 });
 
 
-require('./app/routes/user.routes')(app);
-require('./app/routes/comment.routes')(app);
-require('./app/routes/post.routes')(app);
+//require('./app/routes/user.routes')(app);
+//require('./app/routes/comment.routes')(app);
+//require('./app/routes/post.routes')(app);
 app.listen(port, '0.0.0.0', ()=>{
     console.log('[SERVER] Listening on port '+port);
+    /*
     mongoose.connect(config.dbUrl, { useNewUrlParser: true })
     .catch(err=>{
         console.log('[!IPFS-ERR] '+err);
@@ -104,6 +105,7 @@ app.listen(port, '0.0.0.0', ()=>{
     }).then(()=>{
         console.log('[IPFS] Succesfully connected to IPFS DB');
     });
+    */
 });
 
 function sendData(err,data,req,res) {
